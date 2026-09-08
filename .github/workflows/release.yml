@@ -37,13 +37,6 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Get short commit SHA
-        id: sha
-        shell: bash
-        run: |
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
-
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -56,11 +49,9 @@ jobs:
           docker build \
             -t ghcr.io/${{ github.repository_owner }}/student-ml-api:${{ steps.version.outputs.version }} \
             -t ghcr.io/${{ github.repository_owner }}/student-ml-api:latest \
-            -t ghcr.io/${{ github.repository_owner }}/student-ml-api:${{ steps.sha.outputs.short_sha }} \
             .
 
       - name: Push Docker images
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/student-ml-api:${{ steps.version.outputs.version }}
           docker push ghcr.io/${{ github.repository_owner }}/student-ml-api:latest
-          docker push ghcr.io/${{ github.repository_owner }}/student-ml-api:${{ steps.sha.outputs.short_sha }}
