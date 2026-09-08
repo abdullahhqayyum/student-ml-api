@@ -58,4 +58,4 @@ def test_predict_invalid_input():
 
     data = response.get_json()
 
-    assert data["error"] == "value must be numeric"
+    assert data["status"] == "wrong"
