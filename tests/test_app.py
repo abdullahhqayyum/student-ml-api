@@ -1,13 +1,14 @@
+from fastapi.testclient import TestClient
 from app import app
+
+client = TestClient(app)
 
 
 def test_health_endpoint():
-    client = app.test_client()
-
     response = client.get("/health")
     assert response.status_code == 200
 
-    data = response.get_json()
+    data = response.json()
 
     assert data["status"] == "healthy"
     assert data["application"] == "student-ml-api"
@@ -17,46 +18,19 @@ def test_health_endpoint():
 
 
 def test_predict_success():
-    client = app.test_client()
-
-    response = client.post(
-        "/predict",
-        json={"value": 10}
-    )
-
+    response = client.post("/predict", json={"value": 10})
     assert response.status_code == 200
 
-    data = response.get_json()
-
+    data = response.json()
     assert data["input"] == 10
     assert data["prediction"] == 20
 
 
 def test_predict_missing_input():
-    client = app.test_client()
-
-    response = client.post(
-        "/predict",
-        json={}
-    )
-
-    assert response.status_code == 400
-
-    data = response.get_json()
-
-    assert data["error"] == "value is required"
+    response = client.post("/predict", json={})
+    assert response.status_code == 422
 
 
 def test_predict_invalid_input():
-    client = app.test_client()
-
-    response = client.post(
-        "/predict",
-        json={"value": "hello"}
-    )
-
-    assert response.status_code == 400
-
-    data = response.get_json()
-
-    assert data["error"] == "value must be numeric"
+    response = client.post("/predict", json={"value": "hello"})
+    assert response.status_code == 422

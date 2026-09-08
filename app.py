@@ -1,9 +1,15 @@
-from flask import Flask, jsonify, request
+from fastapi import FastAPI
+from pydantic import BaseModel
 
-app = Flask(__name__)
+app = FastAPI()
 
 APP_VERSION = "1.1.0"
 MODEL_VERSION = "model-1"
+
+
+class PredictionRequest(BaseModel):
+    value: float
+
 
 @app.get("/health")
 def health():
@@ -17,28 +23,8 @@ def health():
 
 
 @app.post("/predict")
-def predict():
-    data = request.get_json(silent=True)
-
-    if not data or "value" not in data:
-        return jsonify({
-            "error": "value is required"
-        }), 400
-
-    value = data["value"]
-
-    if not isinstance(value, (int, float)):
-        return jsonify({
-            "error": "value must be numeric"
-        }), 400
-
-    prediction = value * 2
-
-    return jsonify({
-        "input": value,
-        "prediction": prediction
-    })
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+def predict(request: PredictionRequest):
+    return {
+        "input": request.value,
+        "prediction": request.value * 2
+    }
