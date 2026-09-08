@@ -5,16 +5,16 @@ app = Flask(__name__)
 APP_VERSION = "1.1.0"
 MODEL_VERSION = "model-1"
 
-
-
 @app.get("/health")
 def health():
     return {
         "status": "healthy",
         "application": "student-ml-api",
+        "version": APP_VERSION,
         "application_version": APP_VERSION,
         "model_version": MODEL_VERSION
     }
+
 
 @app.post("/predict")
 def predict():
