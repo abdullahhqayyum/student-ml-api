@@ -1,5 +1,15 @@
 FROM python:3.13-slim
 
+ARG APP_VERSION
+ARG GIT_COMMIT
+ARG BUILD_DATE
+
+LABEL org.opencontainers.image.title="student-ml-api" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.revision="${GIT_COMMIT}" \
+      org.opencontainers.image.source="https://github.com/abdullahhqayyum/student-ml-api" \
+      org.opencontainers.image.created="${BUILD_DATE}"
+
 WORKDIR /app
 
 COPY requirements.txt .
